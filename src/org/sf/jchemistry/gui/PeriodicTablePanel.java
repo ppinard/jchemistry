@@ -759,10 +759,11 @@ public class PeriodicTablePanel extends JPanel {
      *            element
      */
     public void setSelection(Element element) {
-        selections.clear();
+        if (element == null)
+            throw new NullPointerException("element == null");
 
-        if (element != null)
-            selections.add(element);
+        selections.clear();
+        selections.add(element);
 
         fireElementSelectionChanged();
     }
@@ -779,10 +780,22 @@ public class PeriodicTablePanel extends JPanel {
     public void setSelection(Iterable<Element> elements) {
         selections.clear();
 
-        for (Element element : elements)
-            if (element != null)
-                selections.add(element);
+        for (Element element : elements) {
+            if (element == null)
+                throw new NullPointerException("One element == null");
+            selections.add(element);
+        }
 
+        fireElementSelectionChanged();
+    }
+
+
+
+    /**
+     * Unselect any selected elements.
+     */
+    public void clearSelection() {
+        selections.clear();
         fireElementSelectionChanged();
     }
 

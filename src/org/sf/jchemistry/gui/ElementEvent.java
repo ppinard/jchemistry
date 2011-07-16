@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.sf.jchemistry.core.Element;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 /**
  * Event object returned by listener of the periodic table panel.
  * 
@@ -61,10 +63,6 @@ public class ElementEvent extends EventObject {
      */
     public ElementEvent(Object source, Set<Element> elements) {
         this(source);
-        if (elements.isEmpty())
-            throw new IllegalArgumentException(
-                    "At least one element must be specified");
-
         this.elements.addAll(elements);
     }
 
@@ -102,8 +100,12 @@ public class ElementEvent extends EventObject {
      * 
      * @return element
      */
+    @CheckForNull
     public Element getElement() {
-        return elements.iterator().next();
+        if (elements.isEmpty())
+            return null;
+        else
+            return elements.iterator().next();
     }
 
 }

@@ -1,0 +1,223 @@
+package org.sf.jchemistry.gui;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+import net.miginfocom.swing.MigLayout;
+
+import org.sf.jchemistry.core.Element;
+import org.sf.jchemistry.core.ElementComparator;
+
+/**
+ * Input field to select one or many elements. The element(s) are selected using
+ * the periodic table dialog. The selection is shown in a label.
+ * 
+ * @author ppinard
+ */
+public class ElementSelectionField extends JComponent {
+
+    /** Serial version UID. */
+    private static final long serialVersionUID = -8361631677623052083L;
+
+    /**
+     * Action listener for the browse button.
+     * 
+     * @author ppinard
+     */
+    private class BrowseButtonActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            PeriodicTableDialog dialog = new PeriodicTableDialog(null);
+            dialog.setModal(true);
+            dialog.setMultiSelection(isMultiSelection);
+            dialog.setSelection(selections);
+
+            // Show dialog
+            dialog.setVisible(true);
+
+            if (dialog.getReturnValue() == JOptionPane.CANCEL_OPTION)
+                return;
+
+            // Update
+            selections = dialog.getSelections();
+            List<Element> elements =
+                    new ArrayList<Element>(dialog.getSelections());
+            Collections.sort(elements, new ElementComparator());
+
+            StringBuilder selectionText = new StringBuilder();
+            Iterator<Element> it = elements.iterator();
+            while (it.hasNext()) {
+                selectionText.append(it.next().symbol());
+                if (it.hasNext())
+                    selectionText.append(", ");
+            }
+
+            selectionField.setText(selectionText.toString());
+        }
+    }
+
+    /** Label to display the selected elements. */
+    private final JTextField selectionField;
+
+    /** Button to select the elements from the periodic table dialog. */
+    private JButton browseButton;
+
+    /** Flag whether multiple elements can be selected. */
+    private boolean isMultiSelection = false;
+
+    /** Selected elements. */
+    private Set<Element> selections = new HashSet<Element>();
+
+
+
+    /**
+     * Creates a new <code>ElementSelectionField</code>.
+     */
+    public ElementSelectionField() {
+        this(true);
+    }
+
+
+
+    /**
+     * Creates a new <code>ElementSelectionField</code>.
+     * 
+     * @param showBrowseButton
+     *            if <code>false</code> the browse button is not created. It can
+     *            be created and position in the parent layout using the method
+     *            {@link #getBrowseButton()}.
+     */
+    public ElementSelectionField(boolean showBrowseButton) {
+        setLayout(new MigLayout());
+
+        selectionField = new JTextField("", 20);
+        selectionField.setEditable(false);
+        add(selectionField, "grow, push");
+
+        if (showBrowseButton) {
+            browseButton = getBrowseButton();
+            add(browseButton, "wrap");
+        }
+    }
+
+
+
+    /**
+     * Returns a reference to the <code>Browse</code> button beside the field.
+     * If the button does not exists, a new one is created and returned. This
+     * new one is not shown on the GUI. It can be used to manually put it beside
+     * the field in a specific layout
+     * 
+     * @return a reference to the <code>Browse</code> button
+     */
+    public JButton getBrowseButton() {
+        // If the Browse button already exists, return it
+        if (browseButton != null)
+            return browseButton;
+
+        // If the Browse button does not exists, create it and return it
+        JButton browseButton = new JButton("...");
+        browseButton.addActionListener(new BrowseButtonActionListener());
+
+        return browseButton;
+    }
+
+
+
+    /**
+     * Returns whether multiple selection of elements is allowed.
+     * 
+     * @return <code>true</code> if more than one element can be selected,
+     *         <code>false</code> otherwise
+     */
+    public boolean isMultiSelection() {
+        return isMultiSelection;
+    }
+
+
+
+    /**
+     * Sets whether more than one element can be selected.
+     * 
+     * @param mode
+     *            <code>true</code> if more than one element can be selected,
+     *            <code>false</code> otherwise
+     */
+    public void setMultiSelection(boolean mode) {
+        isMultiSelection = mode;
+    }
+
+
+
+    /**
+     * Returns the selected element from the dialog.
+     * 
+     * @return selected element
+     */
+    public Element getSelection() {
+        if (selections.isEmpty())
+            return null;
+        else
+            return selections.iterator().next();
+    }
+
+
+
+    /**
+     * Returns the selected element(s) from the dialog.
+     * 
+     * @return selected element(s)
+     */
+    public Set<Element> getSelections() {
+        return new HashSet<Element>(selections);
+    }
+
+
+
+    /**
+     * Selects the specified element in this periodic table. Other previously
+     * selected elements are unselected.
+     * 
+     * @param element
+     *            element
+     */
+    public void setSelection(Element element) {
+        if (element == null)
+            throw new NullPointerException("element == null");
+
+        selections.clear();
+        selections.add(element);
+    }
+
+
+
+    /**
+     * Sets the specified elements in this periodic table. Other previously
+     * selected elements are unselected.
+     * 
+     * @param elements
+     *            elements
+     */
+    public void setSelection(Iterable<Element> elements) {
+        selections.clear();
+
+        for (Element element : elements) {
+            if (element == null)
+                throw new NullPointerException("One element == null");
+            selections.add(element);
+        }
+    }
+
+}

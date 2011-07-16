@@ -20,12 +20,15 @@ package org.sf.jchemistry.gui;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -47,6 +50,8 @@ public class PeriodicTableDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            returnValue = JOptionPane.CANCEL_OPTION;
+            periodicTablePanel.clearSelection();
             setVisible(false);
         }
 
@@ -72,6 +77,57 @@ public class PeriodicTableDialog extends JDialog {
 
             infoLabel.setText(str.toString());
         }
+    }
+
+    /**
+     * Internal window listener to duplicate cancel operation if the window is
+     * closed by the user.
+     * 
+     * @author ppinard
+     */
+    private class InternalWindowListener implements WindowListener {
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+        }
+
+
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+        }
+
+
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            returnValue = JOptionPane.CANCEL_OPTION;
+            periodicTablePanel.clearSelection();
+        }
+
+
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+        }
+
+
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+        }
+
+
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+        }
+
+
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+        }
 
     }
 
@@ -84,7 +140,7 @@ public class PeriodicTableDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            selections = periodicTablePanel.getSelections();
+            returnValue = JOptionPane.OK_OPTION;
             setVisible(false);
         }
 
@@ -99,8 +155,8 @@ public class PeriodicTableDialog extends JDialog {
     /** Information label. */
     private final JLabel infoLabel;
 
-    /** Selected elements. */
-    private Set<Element> selections;
+    /** Return value from the dialog (OK or CANCEL). */
+    private int returnValue;
 
 
 
@@ -112,6 +168,8 @@ public class PeriodicTableDialog extends JDialog {
      */
     public PeriodicTableDialog(Frame owner) {
         super(owner, "Periodic Table", true);
+
+        addWindowListener(new InternalWindowListener());
 
         setLayout(new MigLayout("", "[grow][50]", ""));
 
@@ -138,30 +196,35 @@ public class PeriodicTableDialog extends JDialog {
 
 
     /**
-     * Returns the selected element from the dialog. If the dialog is closed
-     * with the Cancel button, <code>null</code> is returned.
+     * Returns whether the dialog was closed with OK or CANCEL button.
      * 
-     * @return selected element or <code>null</code> if the Cancel is pressed
+     * @return {@link JOptionPane#OK_OPTION} or
+     *         {@link JOptionPane#CANCEL_OPTION}
      */
-    public Element getSelection() {
-        if (selections == null)
-            return null;
-        else if (selections.isEmpty())
-            return null;
-        else
-            return selections.iterator().next();
+    public int getReturnValue() {
+        return returnValue;
     }
 
 
 
     /**
-     * Returns the selected element(s) from the dialog. If the dialog is closed
-     * with the Cancel button, <code>null</code> is returned.
+     * Returns the selected element from the dialog.
      * 
-     * @return selected element(s) or <code>null</code> if the Cancel is pressed
+     * @return selected element
+     */
+    public Element getSelection() {
+        return periodicTablePanel.getSelection();
+    }
+
+
+
+    /**
+     * Returns the selected element(s) from the dialog.
+     * 
+     * @return selected element(s)
      */
     public Set<Element> getSelections() {
-        return selections;
+        return periodicTablePanel.getSelections();
     }
 
 
@@ -215,12 +278,4 @@ public class PeriodicTableDialog extends JDialog {
         periodicTablePanel.setSelection(elements);
     }
 
-
-
-    @Override
-    public void setVisible(boolean flag) {
-        if (flag)
-            selections = null; // reset
-        super.setVisible(flag);
-    }
 }
