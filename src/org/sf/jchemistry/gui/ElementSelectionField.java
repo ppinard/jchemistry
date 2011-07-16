@@ -27,9 +27,6 @@ import org.sf.jchemistry.core.ElementComparator;
  */
 public class ElementSelectionField extends JComponent {
 
-    /** Serial version UID. */
-    private static final long serialVersionUID = -8361631677623052083L;
-
     /**
      * Action listener for the browse button.
      * 
@@ -65,8 +62,13 @@ public class ElementSelectionField extends JComponent {
             }
 
             selectionField.setText(selectionText.toString());
+
+            fireElementSelectionListeners();
         }
     }
+
+    /** Serial version UID. */
+    private static final long serialVersionUID = -8361631677623052083L;
 
     /** Label to display the selected elements. */
     private final JTextField selectionField;
@@ -79,6 +81,10 @@ public class ElementSelectionField extends JComponent {
 
     /** Selected elements. */
     private Set<Element> selections = new HashSet<Element>();
+
+    /** Listeners. */
+    private List<ElementSelectionListener> listeners =
+            new ArrayList<ElementSelectionListener>();
 
 
 
@@ -108,8 +114,34 @@ public class ElementSelectionField extends JComponent {
 
         if (showBrowseButton) {
             browseButton = getBrowseButton();
-            add(browseButton, "wrap");
+            add(browseButton);
         }
+    }
+
+
+
+    /**
+     * Adds an element selection listener.
+     * 
+     * @param listener
+     *            listener
+     */
+    public void addElementSelectionListener(ElementSelectionListener listener) {
+        if (listener == null)
+            throw new NullPointerException("listener == null");
+        listeners.add(listener);
+    }
+
+
+
+    /**
+     * Fires all the element selection listeners.
+     */
+    protected void fireElementSelectionListeners() {
+        ElementEvent event = new ElementEvent(this, selections);
+
+        for (ElementSelectionListener listener : listeners)
+            listener.selectionChanged(event);
     }
 
 
@@ -137,26 +169,12 @@ public class ElementSelectionField extends JComponent {
 
 
     /**
-     * Returns whether multiple selection of elements is allowed.
+     * Returns the element selection listeners.
      * 
-     * @return <code>true</code> if more than one element can be selected,
-     *         <code>false</code> otherwise
+     * @return listeners
      */
-    public boolean isMultiSelection() {
-        return isMultiSelection;
-    }
-
-
-
-    /**
-     * Sets whether more than one element can be selected.
-     * 
-     * @param mode
-     *            <code>true</code> if more than one element can be selected,
-     *            <code>false</code> otherwise
-     */
-    public void setMultiSelection(boolean mode) {
-        isMultiSelection = mode;
+    public List<ElementSelectionListener> getElementSelectionListener() {
+        return new ArrayList<ElementSelectionListener>(listeners);
     }
 
 
@@ -187,6 +205,45 @@ public class ElementSelectionField extends JComponent {
 
 
     /**
+     * Returns whether multiple selection of elements is allowed.
+     * 
+     * @return <code>true</code> if more than one element can be selected,
+     *         <code>false</code> otherwise
+     */
+    public boolean isMultiSelection() {
+        return isMultiSelection;
+    }
+
+
+
+    /**
+     * Removes an element selection listener.
+     * 
+     * @param listener
+     *            listener
+     */
+    public void removeElementSelectionListener(ElementSelectionListener listener) {
+        if (listener == null)
+            throw new NullPointerException("listener == null");
+        listeners.remove(listener);
+    }
+
+
+
+    /**
+     * Sets whether more than one element can be selected.
+     * 
+     * @param mode
+     *            <code>true</code> if more than one element can be selected,
+     *            <code>false</code> otherwise
+     */
+    public void setMultiSelection(boolean mode) {
+        isMultiSelection = mode;
+    }
+
+
+
+    /**
      * Selects the specified element in this periodic table. Other previously
      * selected elements are unselected.
      * 
@@ -199,6 +256,8 @@ public class ElementSelectionField extends JComponent {
 
         selections.clear();
         selections.add(element);
+
+        fireElementSelectionListeners();
     }
 
 
@@ -218,6 +277,8 @@ public class ElementSelectionField extends JComponent {
                 throw new NullPointerException("One element == null");
             selections.add(element);
         }
+
+        fireElementSelectionListeners();
     }
 
 }
