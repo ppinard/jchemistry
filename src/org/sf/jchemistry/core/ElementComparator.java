@@ -1,5 +1,6 @@
 package org.sf.jchemistry.core;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -7,7 +8,12 @@ import java.util.Comparator;
  * 
  * @author ppinard
  */
-public class ElementComparator implements Comparator<Element> {
+public class ElementComparator implements Comparator<Element>, Serializable {
+
+    /** Serial version UID. */
+    private static final long serialVersionUID = -236437422763230177L;
+
+
 
     @Override
     public int compare(Element o1, Element o2) {

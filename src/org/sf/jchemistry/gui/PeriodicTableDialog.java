@@ -67,6 +67,11 @@ public class PeriodicTableDialog extends JDialog {
         @Override
         public void mouseMoved(ElementEvent e) {
             Element element = e.getElement();
+            if (element == null) {
+                infoLabel.setText("");
+                return;
+            }
+
             StringBuilder str = new StringBuilder();
 
             str.append("<html>");
