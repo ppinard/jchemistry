@@ -608,6 +608,7 @@ public class PeriodicTablePanel extends JPanel {
             button.setForeground(Color.BLACK);
         else
             button.setForeground(Color.WHITE);
+        button.setToolTipText(element.fullName() + " (" + element.z() + ")");
 
         button.addActionListener(new ButtonActionListener(element));
         button.addMouseMotionListener(new ButtonMouseMotionListener(element));
