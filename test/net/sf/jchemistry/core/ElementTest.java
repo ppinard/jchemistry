@@ -1,4 +1,4 @@
-package org.sf.jchemistry.core;
+package net.sf.jchemistry.core;
 
 import org.junit.Test;
 

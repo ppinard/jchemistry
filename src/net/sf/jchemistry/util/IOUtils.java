@@ -1,10 +1,10 @@
-package org.sf.jchemistry.util;
+package net.sf.jchemistry.util;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.sf.jchemistry.crystallography.core.ScatteringFactors;
+import net.sf.jchemistry.crystallography.core.ScatteringFactors;
 
 /**
  * Utilities for input/output.

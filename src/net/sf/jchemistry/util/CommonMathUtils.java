@@ -1,4 +1,4 @@
-package org.sf.jchemistry.util;
+package net.sf.jchemistry.util;
 
 import org.apache.commons.math.geometry.Vector3D;
 import org.apache.commons.math.linear.ArrayRealVector;

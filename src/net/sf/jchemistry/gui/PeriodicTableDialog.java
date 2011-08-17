@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sf.jchemistry.gui;
+package net.sf.jchemistry.gui;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -31,9 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import net.miginfocom.swing.MigLayout;
-
-import org.sf.jchemistry.core.Element;
-import org.sf.jchemistry.core.ElementProperties;
+import net.sf.jchemistry.core.Element;
+import net.sf.jchemistry.core.ElementProperties;
 
 /**
  * Dialog to select element(s) from a periodic table.
@@ -79,7 +78,8 @@ public class PeriodicTableDialog extends JDialog {
             str.append(element.fullName() + " (" + element.z() + ")<br>");
 
             if (ElementProperties.hasAtomicMass(element))
-                str.append("Atomic mass: " + ElementProperties.getAtomicMass(element)
+                str.append("Atomic mass: "
+                        + ElementProperties.getAtomicMass(element)
                         + " g/mol<br>");
 
             if (ElementProperties.hasDensity(element))

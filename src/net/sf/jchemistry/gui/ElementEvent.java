@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sf.jchemistry.gui;
+package net.sf.jchemistry.gui;
 
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sf.jchemistry.core.Element;
-
+import net.sf.jchemistry.core.Element;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**

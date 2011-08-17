@@ -1,12 +1,11 @@
-package org.sf.jchemistry.core;
+package net.sf.jchemistry.core;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sf.jchemistry.util.IOUtils;
-
+import net.sf.jchemistry.util.IOUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -370,7 +369,7 @@ public final class ElementProperties {
      */
     private static void readData() throws IOException {
         Reader reader =
-                IOUtils.getReader("org/sf/jchemistry/data/properties.csv");
+                IOUtils.getReader("net/sf/jchemistry/data/properties.csv");
 
         CSVReader csv = new CSVReader(reader);
         csv.readNext(); // skip header

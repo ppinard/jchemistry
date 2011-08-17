@@ -1,4 +1,4 @@
-package org.sf.jchemistry.gui;
+package net.sf.jchemistry.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
-
-import org.sf.jchemistry.core.Element;
-import org.sf.jchemistry.core.ElementComparator;
+import net.sf.jchemistry.core.Element;
+import net.sf.jchemistry.core.ElementComparator;
 
 /**
  * Input field to select one or many elements. The element(s) are selected using

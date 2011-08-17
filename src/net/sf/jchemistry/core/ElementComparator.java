@@ -1,4 +1,4 @@
-package org.sf.jchemistry.core;
+package net.sf.jchemistry.core;
 
 import java.io.Serializable;
 import java.util.Comparator;
