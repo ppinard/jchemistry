@@ -62,32 +62,6 @@ public final class CommonMathUtils {
 
 
     /**
-     * Returns the positive vector of the specified vector. A positive vector is
-     * a vector where its first non-zero component is greater than zero.
-     * 
-     * @param v
-     *            a vector
-     * @return resultant vector
-     */
-    public static Vector3D positive(Vector3D v) {
-        double[] data = new double[] { v.getX(), v.getY(), v.getZ() };
-
-        for (int i = 0; i < 3; i++)
-            if (data[i] == 0.0)
-                continue;
-            else if (data[i] < 0.0) {
-                for (int j = i; j < 3; j++)
-                    data[j] = -1 * data[j];
-                break;
-            } else
-                break;
-
-        return new Vector3D(data[0], data[1], data[2]);
-    }
-
-
-
-    /**
      * Constructor to prevent the class to be instantiated.
      */
     private CommonMathUtils() {

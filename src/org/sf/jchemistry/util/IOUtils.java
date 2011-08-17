@@ -11,7 +11,7 @@ import org.sf.jchemistry.crystallography.core.ScatteringFactors;
  * 
  * @author ppinard
  */
-public class IOUtils {
+public final class IOUtils {
 
     /**
      * Returns the reader for the specified filename. The filename is a relative
@@ -34,5 +34,14 @@ public class IOUtils {
                     + ") not found.");
 
         return new InputStreamReader(reader);
+    }
+
+
+
+    /**
+     * Constructor to prevent the class to be instantiated.
+     */
+    private IOUtils() {
+
     }
 }

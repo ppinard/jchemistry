@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
 
 import org.sf.jchemistry.core.Element;
-import org.sf.jchemistry.core.Properties;
+import org.sf.jchemistry.core.ElementProperties;
 
 /**
  * Dialog to select element(s) from a periodic table.
@@ -78,12 +78,12 @@ public class PeriodicTableDialog extends JDialog {
             str.append("<html>");
             str.append(element.fullName() + " (" + element.z() + ")<br>");
 
-            if (Properties.hasAtomicMass(element))
-                str.append("Atomic mass: " + Properties.getAtomicMass(element)
+            if (ElementProperties.hasAtomicMass(element))
+                str.append("Atomic mass: " + ElementProperties.getAtomicMass(element)
                         + " g/mol<br>");
 
-            if (Properties.hasDensity(element))
-                str.append("Density: " + Properties.getDensity(element)
+            if (ElementProperties.hasDensity(element))
+                str.append("Density: " + ElementProperties.getDensity(element)
                         + " g/cm3<br>");
             str.append("</html>");
 

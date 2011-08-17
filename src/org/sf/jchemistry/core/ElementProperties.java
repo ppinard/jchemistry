@@ -14,7 +14,7 @@ import au.com.bytecode.opencsv.CSVReader;
  * 
  * @author ppinard
  */
-public final class Properties {
+public final class ElementProperties {
 
     /** Density map. */
     private static final Map<Element, Double> DENSITY =
@@ -81,11 +81,11 @@ public final class Properties {
 
 
     /**
-     * Returns the atomic radius of the specified element (in m).
+     * Returns the atomic radius of the specified element (in angstroms).
      * 
      * @param element
      *            element
-     * @return atomic radius (in m)
+     * @return atomic radius (in angstroms)
      * @throws IllegalArgumentException
      *             if the atomic radius is not available for the specified
      *             element
@@ -119,11 +119,11 @@ public final class Properties {
 
 
     /**
-     * Returns the covalent radius of the specified element (in m).
+     * Returns the covalent radius of the specified element (in angstroms).
      * 
      * @param element
      *            element
-     * @return covalent radius (in m)
+     * @return covalent radius (in angstroms)
      * @throws IllegalArgumentException
      *             if the covalent radius is not available for the specified
      *             element
@@ -384,8 +384,8 @@ public final class Properties {
 
             element = Element.fromZ(Integer.parseInt(line[0]));
 
-            readStoreValue(line[1], element, ATOMIC_RADIUS, 1e-10);
-            readStoreValue(line[2], element, COVALENT_RADIUS, 1e-10);
+            readStoreValue(line[1], element, ATOMIC_RADIUS, 1);
+            readStoreValue(line[2], element, COVALENT_RADIUS, 1);
             readStoreValue(line[3], element, ATOMIC_MASS, 1);
             readStoreValue(line[4], element, BOILING_TEMP, 1);
             readStoreValue(line[5], element, MELTING_TEMP, 1);
@@ -426,8 +426,7 @@ public final class Properties {
     /**
      * Don't let anyone instantiate this class.
      */
-    private Properties() {
-        throw new RuntimeException("No constructor");
+    private ElementProperties() {
     }
 
 }
