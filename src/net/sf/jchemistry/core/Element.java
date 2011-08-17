@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Enumeration of the periodic table elements.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public enum Element {
     /** Hydrogen. */

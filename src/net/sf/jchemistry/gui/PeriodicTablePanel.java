@@ -44,14 +44,14 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 /**
  * Swing panel containing the representation of the periodic table of elements.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public class PeriodicTablePanel extends JPanel {
 
     /**
      * Action listener for all the element buttons.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class ButtonActionListener implements ActionListener {
 
@@ -98,7 +98,7 @@ public class PeriodicTablePanel extends JPanel {
     /**
      * Mouse motion listener for all the element buttons.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class ButtonMouseMotionListener implements MouseMotionListener {
 
@@ -151,7 +151,7 @@ public class PeriodicTablePanel extends JPanel {
      * Internal selection listener to update the appearance of the element
      * buttons.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class InternalElementSelectionListener implements
             ElementSelectionListener {
@@ -190,7 +190,7 @@ public class PeriodicTablePanel extends JPanel {
     /**
      * Internal layout for the periodic table.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private static class InternalPeriodicTableLayout implements
             PeriodicTableLayout {

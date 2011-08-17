@@ -23,7 +23,7 @@ import java.util.EventListener;
  * Event listener triggered when the mouse moves over an element in the periodic
  * table.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public interface ElementMouseMotionListener extends EventListener {
 

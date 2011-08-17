@@ -25,7 +25,7 @@ import javax.swing.border.Border;
  * Layout of the periodic table. It is used to customize the appearance of the
  * periodic table.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public interface PeriodicTableLayout {
 

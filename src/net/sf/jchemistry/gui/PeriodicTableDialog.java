@@ -37,14 +37,14 @@ import net.sf.jchemistry.core.ElementProperties;
 /**
  * Dialog to select element(s) from a periodic table.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public class PeriodicTableDialog extends JDialog {
 
     /**
      * Action listener for the Cancel button.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class CancelActionListener implements ActionListener {
 
@@ -60,7 +60,7 @@ public class PeriodicTableDialog extends JDialog {
     /**
      * Mouse motion listener to update the information label.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class InfoLabelListener implements ElementMouseMotionListener {
 
@@ -95,7 +95,7 @@ public class PeriodicTableDialog extends JDialog {
      * Internal window listener to duplicate cancel operation if the window is
      * closed by the user.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class InternalWindowListener implements WindowListener {
 
@@ -146,7 +146,7 @@ public class PeriodicTableDialog extends JDialog {
     /**
      * Action listener of the Ok button.
      * 
-     * @author ppinard
+     * @author Philippe T. Pinard
      */
     private class OkActionListener implements ActionListener {
 

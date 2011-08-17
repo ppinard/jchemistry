@@ -23,7 +23,7 @@ import java.util.EventListener;
  * Event listener triggered when the element(s) selected in the periodic table
  * are modified.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public interface ElementSelectionListener extends EventListener {
 

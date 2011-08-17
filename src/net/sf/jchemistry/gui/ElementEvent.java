@@ -27,7 +27,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 /**
  * Event object returned by listener of the periodic table panel.
  * 
- * @author ppinard
+ * @author Philippe T. Pinard
  */
 public class ElementEvent extends EventObject {
 
