@@ -1,6 +1,6 @@
 <ivy-module version="2.0">
     <info organisation="net.sf.jchemistry" module="jchemistry" revision="0.1">
-        <license name="GPLv3" />
+        <license name="LGPLv3" />
         <description>Java chemistry library. http://jchemistry.sf.net</description>
     </info>
     
