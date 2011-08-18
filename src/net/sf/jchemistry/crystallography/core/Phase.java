@@ -173,7 +173,7 @@ public class Phase {
     /**
      * Returns the reflectors of this phase. To automatically compute the
      * reflectors based on {@link ScatteringFactors}, refer to
-     * {@link #computeReflectors(ScatteringFactors, int)}.
+     * {@link #computeReflectors(ScatteringFactors, int, double)}.
      * 
      * @return reflectors
      */

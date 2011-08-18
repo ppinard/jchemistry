@@ -26,19 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * List of <code>Reflector</code>s of a crystal. The class finds all the
- * diffracting planes of a given crystal and creates the corresponding
- * reflectors.
- * <p/>
- * The list of reflectors is limited by the maximum index of the plane. For
- * example, if the maximum index is equal to 3, the last planes to be evaluated
- * will be {3,3,3) and {-3,-3,-3). The diffraction intensity of the plane is
- * calculated using the specified scattering factors (either
- * {@link ElectronScatteringFactors} or {@link XrayScatteringFactors}). The
- * X-rays scattering factors are more robust. <b>References:</b>
- * <ul>
- * <li>Lecture notes from Raynald Gauvin, McGill University, 2007</li>
- * </ul>
+ * List of <code>Reflector</code>s of a crystal.
  * 
  * @author Philippe T. Pinard
  */
