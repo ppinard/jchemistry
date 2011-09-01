@@ -112,6 +112,7 @@
                includeAntRuntime="false">
             <exclude name="net/sf/jchemistry/gui/**" />
             <exclude name="net/sf/jchemistry/crystallography/gui/**" />
+            <exclude name="net/sf/jchemistry/util/gui/**" />
         </javac>
     </target>
 

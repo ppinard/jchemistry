@@ -31,10 +31,11 @@
         <dependency org="junit" name="junit" rev="4.8.2" conf="test->default"/>
         <dependency org="org.beanshell" name="bsh" rev="2.0b4" 
             conf="headless->default" />
-        <dependency org="org.uispec4j" name="uispec4j" rev="2.4">
-            <exclude org="asm" />
-            <exclude org="junit" />
-            <exclude org="org.testng" />
+        <dependency org="org.uispec4j" name="uispec4j" rev="2.4" 
+            conf="test->default">
+                <exclude org="asm" />
+                <exclude org="junit" /><!-- Already included -->
+                <exclude org="org.testng" />
         </dependency>
     </dependencies>
 </ivy-module>
