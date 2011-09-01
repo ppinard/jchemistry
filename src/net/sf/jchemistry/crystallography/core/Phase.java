@@ -19,18 +19,20 @@ package net.sf.jchemistry.crystallography.core;
 
 import java.util.ArrayList;
 
+import net.sf.jchemistry.util.Citable;
+
 /**
  * Phase.
  * 
  * @author Philippe T. Pinard
  */
-public class Phase {
+public class Phase implements Citable {
 
     /** Common or mineral name. */
     private final String name;
 
     /** Reference to the literature. */
-    private final String reference;
+    private final String citation;
 
     /** Space group. */
     private final SpaceGroup spaceGroup;
@@ -51,14 +53,14 @@ public class Phase {
      * 
      * @param name
      *            common name or mineral name
-     * @param reference
+     * @param citation
      *            reference to the literature
      * @param spaceGroup
      *            space group
      * @param unitCell
      *            unit cell
      */
-    public Phase(String name, String reference, SpaceGroup spaceGroup,
+    public Phase(String name, String citation, SpaceGroup spaceGroup,
             UnitCell unitCell) {
         if (name == null)
             throw new NullPointerException("name == null");
@@ -66,9 +68,9 @@ public class Phase {
             throw new IllegalArgumentException("Name is an empty string.");
         this.name = name;
 
-        if (reference == null)
-            throw new NullPointerException("reference == null");
-        this.reference = reference;
+        if (citation == null)
+            throw new NullPointerException("citation == null");
+        this.citation = citation;
 
         if (spaceGroup == null)
             throw new NullPointerException("space group == null");
@@ -119,13 +121,9 @@ public class Phase {
 
 
 
-    /**
-     * Returns the reference of this phase in the literature.
-     * 
-     * @return reference in the literature
-     */
-    public String getReference() {
-        return reference;
+    @Override
+    public String getCitation() {
+        return citation;
     }
 
 
@@ -198,8 +196,8 @@ public class Phase {
     public void computeReflectors(ScatteringFactors scatter, int maxIndex,
             double minRelativeIntensity) {
         reflectors.clear();
-        reflectors.addAll(Reflectors.generate(this, scatter, maxIndex,
-                minRelativeIntensity));
+        reflectors.addAll(Reflectors.generate(getUnitCell(), getAtoms(),
+                scatter, maxIndex, minRelativeIntensity));
     }
 
 }

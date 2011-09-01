@@ -21,8 +21,6 @@ import java.util.Arrays;
 
 import net.jcip.annotations.Immutable;
 
-import org.apache.commons.math.geometry.Vector3D;
-
 /**
  * Defines a reflector.
  * 
@@ -30,39 +28,6 @@ import org.apache.commons.math.geometry.Vector3D;
  */
 @Immutable
 public final class Reflector {
-
-    /**
-     * Creates a new <code>Reflector</code>. Note that the h, k, l coordinates
-     * are converted to positive coordinates.
-     * 
-     * @param h
-     *            h index of the crystallographic plane
-     * @param k
-     *            k index of the crystallographic plane
-     * @param l
-     *            l index of the crystallographic plane
-     * @param phase
-     *            crystal phase of the reflector
-     * @param scatter
-     *            scattering factors
-     * @return new reflector
-     */
-    public static Reflector create(int h, int k, int l, Phase phase,
-            ScatteringFactors scatter) {
-        if (h == 0 && k == 0 & l == 0)
-            throw new IllegalArgumentException("No null reflector.");
-
-        UnitCell unitCell = phase.getUnitCell();
-        AtomSites atoms = phase.getAtoms();
-
-        Vector3D p = new Vector3D(h, k, l);
-        double intensity =
-                Calculations.diffractionIntensity(p, unitCell, atoms, scatter);
-
-        return new Reflector(h, k, l, intensity);
-    }
-
-
 
     /**
      * Calculates the hash code (unique integer representation) for the indices.
@@ -104,7 +69,7 @@ public final class Reflector {
      * @param l
      *            l index of the crystallographic plane
      * @param intensity
-     *            diffraction intensity intensity of the crystal
+     *            diffraction intensity of the reflector
      * @throws IllegalArgumentException
      *             if h = k = l = 0
      * @throws IllegalArgumentException

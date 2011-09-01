@@ -71,7 +71,7 @@ public class CifLoaderTest {
                         + "The crystal structures of forsterite and hortonolite at "
                         + "several temperatures  up to 900 C  T = 25 C, "
                         + "American Mineralogist, 58, 588-593";
-        assertEquals(expected, phase.getReference());
+        assertEquals(expected, phase.getCitation());
 
         // Space group
         assertEquals(SpaceGroups1.SG62, phase.getSpaceGroup());
@@ -122,7 +122,7 @@ public class CifLoaderTest {
                         + "FPLAPW study of the structural, electronic, and optical "
                         + "properties of  Ga2 O3: monoclinic and hexagonal phases, "
                         + "Journal of Alloys Compd., 488, 148-156";
-        assertEquals(expected, phase.getReference());
+        assertEquals(expected, phase.getCitation());
 
         // Space group
         assertEquals(SpaceGroups.SG12, phase.getSpaceGroup());

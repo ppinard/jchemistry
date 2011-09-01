@@ -57,11 +57,8 @@ public class ReflectorsTest {
         UnitCell unitCell = UnitCellFactory.cubic(2.87);
         AtomSites atoms = AtomSitesFactory.atomSitesBCC(Element.Al);
 
-        Phase phase = new Phase("BCC", SpaceGroups2.SG229, unitCell);
-        phase.getAtoms().addAll(atoms);
-
         Reflectors refls =
-                Reflectors.generate(phase,
+                Reflectors.generate(unitCell, atoms,
                         ScatteringFactorsFactory.ELECTRON_MOTT_BETHE, 2, 1e-14);
 
         // Expected indices
@@ -121,11 +118,8 @@ public class ReflectorsTest {
         UnitCell unitCell = UnitCellFactory.cubic(5.43);
         AtomSites atoms = AtomSitesFactory.atomSitesFCC(Element.Al);
 
-        Phase phase = new Phase("FCC", SpaceGroups2.SG216, unitCell);
-        phase.getAtoms().addAll(atoms);
-
         Reflectors refls =
-                Reflectors.generate(phase,
+                Reflectors.generate(unitCell, atoms,
                         ScatteringFactorsFactory.ELECTRON_MOTT_BETHE, 2, 0.01);
 
         // Expected indices
@@ -176,12 +170,10 @@ public class ReflectorsTest {
         UnitCell unitCell = UnitCellFactory.hexagonal(3.21, 5.21);
         AtomSites atoms = AtomSitesFactory.atomSitesHCP(Element.Al);
 
-        Phase phase = new Phase("HCP", SpaceGroups2.SG168, unitCell);
-        phase.getAtoms().addAll(atoms);
-
         ScatteringFactors scatter =
                 ScatteringFactorsFactory.ELECTRON_MOTT_BETHE;
-        Reflectors refls = Reflectors.generate(phase, scatter, 2, 0.01);
+        Reflectors refls =
+                Reflectors.generate(unitCell, atoms, scatter, 2, 0.01);
 
         // From Rollett 2008
         boolean condition1, condition2;

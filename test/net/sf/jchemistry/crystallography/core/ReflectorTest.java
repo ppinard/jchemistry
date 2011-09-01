@@ -17,8 +17,6 @@
  */
 package net.sf.jchemistry.crystallography.core;
 
-import net.sf.jchemistry.crystallography.test.PhaseFactory;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -144,20 +142,6 @@ public class ReflectorTest {
     @Test
     public void testToString() {
         assertEquals("[1, 2, 3]\t0.03512", refl.toString());
-    }
-
-
-
-    @Test
-    public void testCreate() {
-        Reflector refl =
-                Reflector.create(1, 2, 3, PhaseFactory.silicon(),
-                        ScatteringFactorsFactory.XRAY_TABULATED);
-
-        assertEquals(1, refl.getH());
-        assertEquals(2, refl.getK());
-        assertEquals(3, refl.getL());
-        assertEquals(1.44183091089e-29, refl.getIntensity(), 1e-35);
     }
 
 }

@@ -53,7 +53,7 @@ public final class Collections {
 
         Iterator<E> i = c.iterator();
         if (!i.hasNext())
-            return "[]";
+            return "";
 
         while (true) {
             E e = i.next();

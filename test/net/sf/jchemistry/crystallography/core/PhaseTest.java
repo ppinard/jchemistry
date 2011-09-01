@@ -29,7 +29,7 @@ public class PhaseTest {
 
     private String name;
 
-    private String reference;
+    private String citation;
 
     private Phase phase;
 
@@ -44,12 +44,12 @@ public class PhaseTest {
     @Before
     public void setUp() throws Exception {
         name = "silicon";
-        reference = "Reference 1";
+        citation = "Reference 1";
         unitCell = UnitCellFactory.cubic(2.0);
         atoms = AtomSitesFactory.atomSitesFCC(Element.Si);
         sg = SpaceGroups2.SG216;
 
-        phase = new Phase(name, reference, sg, unitCell);
+        phase = new Phase(name, citation, sg, unitCell);
         phase.getAtoms().addAll(atoms);
     }
 
@@ -60,14 +60,14 @@ public class PhaseTest {
         assertEquals(2.0, phase.getUnitCell().getA(), 1e-7);
         assertEquals(4, phase.getAtoms().size());
         assertEquals(name, phase.getName());
-        assertEquals(reference, phase.getReference());
+        assertEquals(citation, phase.getCitation());
     }
 
 
 
     @Test(expected = NullPointerException.class)
     public void testPhaseException1() {
-        new Phase(null, reference, sg, unitCell);
+        new Phase(null, citation, sg, unitCell);
     }
 
 
@@ -81,21 +81,21 @@ public class PhaseTest {
 
     @Test(expected = NullPointerException.class)
     public void testPhaseException3() {
-        new Phase(name, reference, null, unitCell);
+        new Phase(name, citation, null, unitCell);
     }
 
 
 
     @Test(expected = NullPointerException.class)
     public void testPhaseException4() {
-        new Phase(name, reference, sg, null);
+        new Phase(name, citation, sg, null);
     }
 
 
 
     @Test(expected = IllegalArgumentException.class)
     public void testPhaseException5() {
-        new Phase("", reference, sg, unitCell);
+        new Phase("", citation, sg, unitCell);
     }
 
 

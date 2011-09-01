@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.math.geometry.Vector3D;
+
 /**
  * List of <code>Reflector</code>s of a crystal.
  * 
@@ -54,50 +56,59 @@ public final class Reflectors extends AbstractSet<Reflector> {
      * less or equal to <code>maxIndice</code>. Only diffracting plane are
      * added.
      * 
-     * @param phase
-     *            phase
+     * @param unitCell
+     *            phase's unit cell
+     * @param atoms
+     *            phase's atoms
      * @param scatter
      *            scattering factors
      * @param maxIndex
      *            maximum index of the planes to compute
+     * @param minRelativeIntensity
+     *            minimum intensity relative to the most intense reflector, i.e.
+     *            percentage of the maximum intensity
      * @throws NullPointerException
      *             if the phase is null
      * @throws NullPointerException
      *             if the scattering factors is null
      * @throws IllegalArgumentException
      *             if the maxIndex is less than 0
-     * @param minRelativeIntensity
-     *            minimum intensity relative to the most intense reflector, i.e.
-     *            percentage of the maximum intensity
      * @return reflectors for the given phase
      */
-    public static Reflectors generate(Phase phase, ScatteringFactors scatter,
-            int maxIndex, double minRelativeIntensity) {
-        if (phase == null)
-            throw new NullPointerException("Crystal cannot be null.");
+    public static Reflectors generate(UnitCell unitCell, AtomSites atoms,
+            ScatteringFactors scatter, int maxIndex, double minRelativeIntensity) {
+        if (unitCell == null)
+            throw new NullPointerException("unit cell == null.");
+        if (atoms == null)
+            throw new NullPointerException("atoms == null.");
         if (scatter == null)
-            throw new NullPointerException("Scattering factors cannot be null.");
+            throw new NullPointerException("Scattering factors == null.");
         if (maxIndex < 1)
             throw new IllegalArgumentException(
                     "The maximum index has to greater or equal to 1.");
+        if (minRelativeIntensity <= 0 || minRelativeIntensity >= 1)
+            throw new IllegalArgumentException("Minimum relative intensity ("
+                    + minRelativeIntensity + ") must be between ]0.0, 1.0[.");
 
         Reflectors refls = new Reflectors();
 
         double minIntensity =
-                Calculations.maximumDiffractionIntensity(phase.getUnitCell(),
-                        phase.getAtoms(), scatter) * minRelativeIntensity;
+                Calculations.maximumDiffractionIntensity(unitCell, atoms,
+                        scatter) * minRelativeIntensity;
 
         // Find reflectors
-        Reflector refl;
+        double intensity;
         for (int h = -maxIndex; h <= maxIndex; h++) {
             for (int k = -maxIndex; k <= maxIndex; k++) {
                 for (int l = -maxIndex; l <= maxIndex; l++) {
                     if (h == 0 && k == 0 & l == 0)
                         continue;
 
-                    refl = Reflector.create(h, k, l, phase, scatter);
-                    if (refl.getIntensity() >= minIntensity)
-                        refls.add(refl);
+                    intensity =
+                            Calculations.diffractionIntensity(new Vector3D(h,
+                                    k, l), unitCell, atoms, scatter);
+                    if (intensity >= minIntensity)
+                        refls.add(new Reflector(h, k, l, intensity));
                 }
             }
         }
@@ -120,12 +131,8 @@ public final class Reflectors extends AbstractSet<Reflector> {
 
 
     /**
-     * Adds a new reflector. The method returns <code>true</code> if and only
-     * if:
-     * <ul>
-     * <li>The relative intensity of the reflector is above the threshold</li>
-     * <li>A reflector with the same h, k, l values was not already added</li>
-     * </ul>
+     * Adds a new reflector. The method returns <code>true</code> if a reflector
+     * with the same h, k, l values was not already added.
      * 
      * @param reflector
      *            new reflector
