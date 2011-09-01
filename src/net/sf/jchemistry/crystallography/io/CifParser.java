@@ -94,10 +94,11 @@ public class CifParser {
                 throw new IOException("Key should starts with an underscore: "
                         + key);
             } else {
-                String value = getNextToken().replaceAll("\\n", " ").trim();
+                String value = getNextToken();
                 if (value == null) {
                     throw new IOException("End of file; data missing: " + key);
                 } else {
+                    value = value.replaceAll("\\n", " ").trim();
                     data.put(key, Collections.singletonList(value));
                 }
             }
