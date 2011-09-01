@@ -17,10 +17,13 @@
  */
 package net.sf.jchemistry.crystallography.core;
 
+import java.util.Set;
+
 import org.apache.commons.math.geometry.Rotation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class LaueGroupTest {
@@ -41,7 +44,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testFromLaueGroup() {
+    public void testFromIndex() {
         assertEquals(LaueGroup.LG1, LaueGroup.fromIndex(1));
         assertEquals(LaueGroup.LG2m, LaueGroup.fromIndex(2));
         assertEquals(LaueGroup.LGmmm, LaueGroup.fromIndex(3));
@@ -58,21 +61,60 @@ public class LaueGroupTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFromLaueGroupException1() {
+    public void testFromIndexException1() {
         LaueGroup.fromIndex(0);
     }
 
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFromLaueGroupException2() {
+    public void testFromIndexException2() {
         LaueGroup.fromIndex(12);
     }
 
 
 
     @Test
-    public void testPG1() {
+    public void testList() {
+        Set<LaueGroup> lgs;
+
+        lgs = LaueGroup.list(CrystalSystem.TRICLINIC);
+        assertEquals(1, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LG1));
+
+        lgs = LaueGroup.list(CrystalSystem.MONOCLINIC);
+        assertEquals(1, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LG2m));
+
+        lgs = LaueGroup.list(CrystalSystem.ORTHORHOMBIC);
+        assertEquals(1, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LGmmm));
+
+        lgs = LaueGroup.list(CrystalSystem.TRIGONAL);
+        assertEquals(2, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LG3));
+        assertTrue(lgs.contains(LaueGroup.LG3m));
+
+        lgs = LaueGroup.list(CrystalSystem.TETRAGONAL);
+        assertEquals(2, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LG4m));
+        assertTrue(lgs.contains(LaueGroup.LG4mmm));
+
+        lgs = LaueGroup.list(CrystalSystem.HEXAGONAL);
+        assertEquals(2, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LG6m));
+        assertTrue(lgs.contains(LaueGroup.LG6mmm));
+
+        lgs = LaueGroup.list(CrystalSystem.CUBIC);
+        assertEquals(2, lgs.size());
+        assertTrue(lgs.contains(LaueGroup.LGm3));
+        assertTrue(lgs.contains(LaueGroup.LGm3m));
+    }
+
+
+
+    @Test
+    public void testLG1() {
         LaueGroup pg = LaueGroup.LG1;
         assertEquals(1, pg.getOperators().length);
         assertEquals("1", pg.getSymbol());
@@ -84,7 +126,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG2() {
+    public void testLG2m() {
         LaueGroup pg = LaueGroup.LG2m;
         assertEquals(2, pg.getOperators().length);
         assertEquals("2/m", pg.getSymbol());
@@ -96,7 +138,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG222() {
+    public void testLGmmm() {
         LaueGroup pg = LaueGroup.LGmmm;
         assertEquals(4, pg.getOperators().length);
         assertEquals("mmm", pg.getSymbol());
@@ -108,7 +150,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG23() {
+    public void testLGm3() {
         LaueGroup pg = LaueGroup.LGm3;
         assertEquals(12, pg.getOperators().length);
         assertEquals("m3", pg.getSymbol());
@@ -120,7 +162,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG3() {
+    public void testLG3() {
         LaueGroup pg = LaueGroup.LG3;
         assertEquals(3, pg.getOperators().length);
         assertEquals("3", pg.getSymbol());
@@ -132,7 +174,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG32() {
+    public void testLG3m() {
         LaueGroup pg = LaueGroup.LG3m;
         assertEquals(6, pg.getOperators().length);
         assertEquals("3m", pg.getSymbol());
@@ -144,7 +186,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG4() {
+    public void testLG4m() {
         LaueGroup pg = LaueGroup.LG4m;
         assertEquals(4, pg.getOperators().length);
         assertEquals("4/m", pg.getSymbol());
@@ -156,7 +198,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG422() {
+    public void testLG4mmm() {
         LaueGroup pg = LaueGroup.LG4mmm;
         assertEquals(8, pg.getOperators().length);
         assertEquals("4/mmm", pg.getSymbol());
@@ -168,7 +210,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG432() {
+    public void testLGm3m() {
         LaueGroup pg = LaueGroup.LGm3m;
         assertEquals(24, pg.getOperators().length);
         assertEquals("m3m", pg.getSymbol());
@@ -180,7 +222,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG6() {
+    public void testLG6m() {
         LaueGroup pg = LaueGroup.LG6m;
         assertEquals(6, pg.getOperators().length);
         assertEquals("6/m", pg.getSymbol());
@@ -192,7 +234,7 @@ public class LaueGroupTest {
 
 
     @Test
-    public void testPG622() {
+    public void testLG6mmm() {
         LaueGroup pg = LaueGroup.LG6mmm;
         assertEquals(12, pg.getOperators().length);
         assertEquals("6/mmm", pg.getSymbol());

@@ -17,6 +17,11 @@
  */
 package net.sf.jchemistry.crystallography.core;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.math.geometry.Rotation;
 
 import static net.sf.jchemistry.crystallography.core.Constants.*;
@@ -80,6 +85,39 @@ public enum LaueGroup {
     LG6mmm(9, "6/mmm", HEXAGONAL, new Rotation[] { O1, H3P_Z, H3N_Z, H6P_Z,
             H6N_Z, O2_Z, H2_X2Y, H2_2XY, O2_X, H2_XY, O2_Y, H2_XNY });
 
+    /** Lookup table with the space group's crystal system. */
+    private static final Map<CrystalSystem, Set<LaueGroup>> CRYSTAL_SYSTEMS =
+            new HashMap<CrystalSystem, Set<LaueGroup>>();
+
+    static {
+        CRYSTAL_SYSTEMS.put(TRICLINIC, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(TRICLINIC).add(LG1);
+
+        CRYSTAL_SYSTEMS.put(MONOCLINIC, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(MONOCLINIC).add(LG2m);
+
+        CRYSTAL_SYSTEMS.put(ORTHORHOMBIC, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(ORTHORHOMBIC).add(LGmmm);
+
+        CRYSTAL_SYSTEMS.put(TRIGONAL, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(TRIGONAL).add(LG3);
+        CRYSTAL_SYSTEMS.get(TRIGONAL).add(LG3m);
+
+        CRYSTAL_SYSTEMS.put(TETRAGONAL, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(TETRAGONAL).add(LG4m);
+        CRYSTAL_SYSTEMS.get(TETRAGONAL).add(LG4mmm);
+
+        CRYSTAL_SYSTEMS.put(HEXAGONAL, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(HEXAGONAL).add(LG6m);
+        CRYSTAL_SYSTEMS.get(HEXAGONAL).add(LG6mmm);
+
+        CRYSTAL_SYSTEMS.put(CUBIC, new HashSet<LaueGroup>());
+        CRYSTAL_SYSTEMS.get(CUBIC).add(LGm3);
+        CRYSTAL_SYSTEMS.get(CUBIC).add(LGm3m);
+    }
+
+
+
     /**
      * Returns the <code>LaueGroup</code> corresponding to the specified Laue
      * group index.
@@ -114,6 +152,19 @@ public enum LaueGroup {
         else
             throw new IllegalArgumentException("Invalid Laue group ("
                     + laueGroup + "), must be between [1,11].");
+    }
+
+
+
+    /**
+     * Returns all the Laue groups with the specified crystal system.
+     * 
+     * @param cs
+     *            crystal system
+     * @return Laue groups in the crystal system
+     */
+    public static Set<LaueGroup> list(CrystalSystem cs) {
+        return CRYSTAL_SYSTEMS.get(cs);
     }
 
     /** Laue group symbol. */
@@ -194,6 +245,13 @@ public enum LaueGroup {
      * @return symbol
      */
     public String getSymbol() {
+        return symbol;
+    }
+
+
+
+    @Override
+    public String toString() {
         return symbol;
     }
 

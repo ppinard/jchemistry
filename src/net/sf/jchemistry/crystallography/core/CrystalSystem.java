@@ -50,4 +50,9 @@ public enum CrystalSystem {
     /** Cubic crystal system (a = b = c and alpha = beta = gamma = PI/2). */
     CUBIC;
 
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
+
 }
