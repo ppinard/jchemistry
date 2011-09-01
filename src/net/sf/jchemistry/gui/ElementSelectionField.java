@@ -28,12 +28,12 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.jchemistry.core.Element;
 import net.sf.jchemistry.core.ElementComparator;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Input field to select one or many elements. The element(s) are selected using
@@ -52,21 +52,11 @@ public class ElementSelectionField extends JComponent {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            PeriodicTableDialog dialog = new PeriodicTableDialog(null);
-            dialog.setModal(true);
-            dialog.setMultiSelection(isMultiSelection);
-            dialog.setSelection(selections);
-
-            // Show dialog
-            dialog.setVisible(true);
-
-            if (dialog.getReturnValue() == JOptionPane.CANCEL_OPTION)
-                return;
-
             // Update
-            selections = dialog.getSelections();
-            List<Element> elements =
-                    new ArrayList<Element>(dialog.getSelections());
+            selections =
+                    PeriodicTableDialogFactory.show(null, isMultiSelection,
+                            selections);
+            List<Element> elements = new ArrayList<Element>(selections);
             Collections.sort(elements, new ElementComparator());
 
             StringBuilder selectionText = new StringBuilder();
@@ -198,8 +188,9 @@ public class ElementSelectionField extends JComponent {
     /**
      * Returns the selected element from the dialog.
      * 
-     * @return selected element
+     * @return selected element or null if no element is selected
      */
+    @CheckForNull
     public Element getSelection() {
         if (selections.isEmpty())
             return null;

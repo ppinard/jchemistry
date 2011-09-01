@@ -19,22 +19,26 @@ package net.sf.jchemistry.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import net.sf.jchemistry.core.Element;
+
 public class PeriodicTableDialogTestManual {
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Periodic Table Dialog Test");
-        final PeriodicTableDialog dialog = new PeriodicTableDialog(frame);
+        final JFrame frame = new JFrame("Periodic Table Dialog Test");
 
         JButton button = new JButton("show");
         button.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(true);
-                System.out.println(dialog.getSelection());
+                Set<Element> elements =
+                        PeriodicTableDialogFactory.show(frame, true,
+                                Element.Al, Element.Mg, Element.Al);
+                System.out.println(elements);
             }
         });
         frame.add(button);

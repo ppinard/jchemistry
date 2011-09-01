@@ -599,6 +599,7 @@ public class PeriodicTablePanel extends JPanel {
      */
     protected JComponent createElementButton(Element element, Color color) {
         JButton button = new JButton(element.symbol());
+        button.setName(element.symbol());
 
         button.setBackground(color);
         button.setBorder(BorderFactory.createEmptyBorder());
@@ -783,6 +784,10 @@ public class PeriodicTablePanel extends JPanel {
             if (element == null)
                 throw new NullPointerException("One element == null");
             selections.add(element);
+
+            // Break after first element
+            if (!isMultiSelection)
+                break;
         }
 
         fireElementSelectionChanged();
