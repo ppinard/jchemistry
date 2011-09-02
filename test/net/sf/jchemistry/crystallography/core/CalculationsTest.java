@@ -1004,7 +1004,7 @@ public class CalculationsTest {
 
 
     @Test
-    public void testPlaneNormal() {
+    public void testPlaneNormalVector3DUnitCell() {
         // Test results from
         // http://www.mse.mtu.edu/casting/my3200/stereo/sg4.html
         Vector3D n = new Vector3D(1, 1, 1);
@@ -1034,6 +1034,47 @@ public class CalculationsTest {
         // Cubic
         unitCell = UnitCellFactory.cubic(5.065);
         actual = Calculations.planeNormal(n, unitCell);
+        actual = actual.scalarMultiply(1.0 / actual.getX());
+        expected = new Vector3D(1.0, 1.0, 1.0);
+
+        assertEquals(expected.getX(), actual.getX(), 1e-3);
+        assertEquals(expected.getY(), actual.getY(), 1e-3);
+        assertEquals(expected.getZ(), actual.getZ(), 1e-3);
+    }
+
+
+
+    @Test
+    public void testPlaneNormalReflectorUnitCell() {
+        // Test results from
+        // http://www.mse.mtu.edu/casting/my3200/stereo/sg4.html
+        Reflector r = new Reflector(1, 1, 1, 1.0);
+
+        // Monoclinic
+        UnitCell unitCell =
+                UnitCellFactory.monoclinic(5.22, 5.27, 5.38,
+                        Math.toRadians(99.46));
+        Vector3D actual = Calculations.planeNormal(r, unitCell);
+        actual = actual.scalarMultiply(1.0 / actual.getZ());
+        Vector3D expected = new Vector3D(1.1386, 1.1654, 1.0);
+
+        assertEquals(expected.getX(), actual.getX(), 1e-3);
+        assertEquals(expected.getY(), actual.getY(), 1e-3);
+        assertEquals(expected.getZ(), actual.getZ(), 1e-3);
+
+        // Tetragonal
+        unitCell = UnitCellFactory.tetragonal(3.64, 5.27);
+        actual = Calculations.planeNormal(r, unitCell);
+        actual = actual.scalarMultiply(1.0 / actual.getX());
+        expected = new Vector3D(1.0, 1.0, 1.448);
+
+        assertEquals(expected.getX(), actual.getX(), 1e-3);
+        assertEquals(expected.getY(), actual.getY(), 1e-3);
+        assertEquals(expected.getZ(), actual.getZ(), 1e-3);
+
+        // Cubic
+        unitCell = UnitCellFactory.cubic(5.065);
+        actual = Calculations.planeNormal(r, unitCell);
         actual = actual.scalarMultiply(1.0 / actual.getX());
         expected = new Vector3D(1.0, 1.0, 1.0);
 

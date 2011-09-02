@@ -505,6 +505,27 @@ public final class Calculations {
 
 
     /**
+     * Returns the plane normal expressed as a vector in Cartesian space.
+     * <p/>
+     * <b>References:</b>
+     * <ul>
+     * <li>http://www.mse.mtu.edu/casting/my3200/stereo/sg4.html</li>
+     * </ul>
+     * 
+     * @param refl
+     *            a reflector
+     * @param unitCell
+     *            unit cell of the crystal
+     * @return plane normal
+     */
+    public static Vector3D planeNormal(Reflector refl, UnitCell unitCell) {
+        return planeNormal(new Vector3D(refl.getH(), refl.getK(), refl.getL()),
+                unitCell);
+    }
+
+
+
+    /**
      * Reduce a rotation to its fundamental group based on the given point
      * group.
      * 
