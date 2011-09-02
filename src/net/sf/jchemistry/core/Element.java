@@ -375,7 +375,7 @@ public enum Element {
 
         SYMBOL = new HashMap<String, Element>();
         for (Element element : values())
-            SYMBOL.put(element.symbol(), element);
+            SYMBOL.put(element.symbol().toLowerCase(), element);
     }
 
 
@@ -399,19 +399,23 @@ public enum Element {
 
 
     /**
-     * Returns an <code>Element</code> of the specified symbol.
+     * Returns an <code>Element</code> of the specified symbol. Note that this
+     * method is case-insensitive.
      * 
      * @param symbol
-     *            symbol of the element (e.g. Cu)
+     *            symbol of the element (e.g. Cu or cu)
      * @return corresponding <code>Element</code>
      * @throws IllegalArgumentException
      *             if no element is associated with the specified symbol
      */
     public static Element fromSymbol(String symbol) {
-        if (!SYMBOL.containsKey(symbol))
+        String symbolLC = symbol.toLowerCase();
+
+        if (!SYMBOL.containsKey(symbolLC))
             throw new IllegalArgumentException(
                     "No element associated with symbol: " + symbol);
-        return SYMBOL.get(symbol);
+
+        return SYMBOL.get(symbolLC);
     }
 
     /** Atomic number. */

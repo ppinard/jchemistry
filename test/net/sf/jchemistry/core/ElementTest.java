@@ -41,8 +41,16 @@ public class ElementTest {
     @Test
     public void testFromSymbol() {
         for (Element element : Element.values())
-            assertEquals(element.symbol(),
-                    Element.fromSymbol(element.symbol()).symbol());
+            assertEquals(element, Element.fromSymbol(element.symbol()));
+    }
+
+
+
+    @Test
+    public void testFromSymbol2() {
+        for (Element element : Element.values())
+            assertEquals(element,
+                    Element.fromSymbol(element.symbol().toUpperCase()));
     }
 
 
