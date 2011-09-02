@@ -19,15 +19,16 @@ package net.sf.jchemistry.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
@@ -52,22 +53,78 @@ public class ElementSelectionField extends JComponent {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Update
             selections =
                     PeriodicTableDialogFactory.show(null, isMultiSelection,
                             selections);
-            List<Element> elements = new ArrayList<Element>(selections);
-            Collections.sort(elements, new ElementComparator());
 
-            StringBuilder selectionText = new StringBuilder();
-            Iterator<Element> it = elements.iterator();
-            while (it.hasNext()) {
-                selectionText.append(it.next().symbol());
-                if (it.hasNext())
-                    selectionText.append(", ");
+            fireElementSelectionListeners();
+        }
+    }
+
+    /**
+     * Internal element selection listener to update the text field.
+     * 
+     * @author ppinard
+     */
+    private class InternalElementSelectionListener implements
+            ElementSelectionListener {
+
+        @Override
+        public void selectionChanged(ElementEvent event) {
+            List<Element> elements = new ArrayList<Element>(selections);
+            java.util.Collections.sort(elements, new ElementComparator());
+
+            String selectionText =
+                    net.sf.jchemistry.util.Collections.join(elements, ", ");
+
+            selectionField.setText(selectionText);
+        }
+    }
+
+    /**
+     * Internal focus listener to parse the elements in the selection text
+     * field.
+     * 
+     * @author ppinard
+     */
+    private class InternalSelectionFieldFocusListener implements FocusListener {
+
+        @Override
+        public void focusGained(FocusEvent e) {
+        }
+
+
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            selections.clear();
+
+            String[] symbols = selectionField.getText().split("[,;]\\s*");
+            if (symbols.length == 0)
+                return;
+            if (symbols[0].isEmpty())
+                return;
+
+            List<String> incorrectSymbols = new ArrayList<String>();
+            for (String symbol : symbols) {
+                try {
+                    selections.add(Element.fromSymbol(symbol));
+                } catch (IllegalArgumentException ex) {
+                    incorrectSymbols.add(symbol);
+                } finally {
+                    if (!isMultiSelection) // Break after first element
+                        break;
+                }
             }
 
-            selectionField.setText(selectionText.toString());
+            if (!incorrectSymbols.isEmpty()) {
+                String message =
+                        "The following symbols are unknown: "
+                                + net.sf.jchemistry.util.Collections.join(
+                                        incorrectSymbols, ", ");
+                JOptionPane.showMessageDialog(null, message,
+                        "Incorrect symbols", JOptionPane.ERROR_MESSAGE);
+            }
 
             fireElementSelectionListeners();
         }
@@ -115,13 +172,16 @@ public class ElementSelectionField extends JComponent {
         setLayout(new MigLayout());
 
         selectionField = new JTextField("", 20);
-        selectionField.setEditable(false);
+        selectionField.setName("selection");
+        selectionField.addFocusListener(new InternalSelectionFieldFocusListener());
         add(selectionField, "grow, push");
 
         if (showBrowseButton) {
             browseButton = getBrowseButton();
             add(browseButton);
         }
+
+        addElementSelectionListener(new InternalElementSelectionListener());
     }
 
 
@@ -167,6 +227,7 @@ public class ElementSelectionField extends JComponent {
 
         // If the Browse button does not exists, create it and return it
         JButton browseButton = new JButton("...");
+        browseButton.setName("browse");
         browseButton.addActionListener(new BrowseButtonActionListener());
 
         return browseButton;
@@ -283,6 +344,10 @@ public class ElementSelectionField extends JComponent {
             if (element == null)
                 throw new NullPointerException("One element == null");
             selections.add(element);
+
+            // Break after first element
+            if (!isMultiSelection)
+                break;
         }
 
         fireElementSelectionListeners();
