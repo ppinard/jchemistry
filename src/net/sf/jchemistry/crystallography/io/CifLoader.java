@@ -19,6 +19,7 @@ package net.sf.jchemistry.crystallography.io;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,6 +44,8 @@ import org.apache.commons.math.geometry.Vector3D;
 import bsh.EvalError;
 import bsh.Interpreter;
 
+import static net.sf.jchemistry.crystallography.io.CifConstants.*;
+
 /**
  * Loader of a phase from a crystallography information file (CIF).
  * 
@@ -60,9 +63,13 @@ public class CifLoader {
     private final Logger logger =
             Logger.getLogger("net.sf.jchemistry.crystallography.io.CifLoader");
 
+    /** Regex pattern to get atom symbol. */
+    private static final Pattern SYMBOL_PATTERN =
+            Pattern.compile("([A-Z][a-z]?).*");
+
     /** Regex pattern to separate atom symbol and charge. */
-    private static final Pattern SYMBOL_CHARGE_MATCHER =
-            Pattern.compile("([A-Z][a-z]?)((\\d+)([+-]?))?");
+    private static final Pattern CHARGE_PATTERN =
+            Pattern.compile("(\\d+)([+-]).*");
 
 
 
@@ -85,7 +92,7 @@ public class CifLoader {
      *             if an error occurs while evaluating the expression of the
      *             position
      */
-    private double calculateCoord(String coord, String x, String y, String z)
+    private double calculateCoord(String coord, double x, double y, double z)
             throws IOException {
         try {
             return ((Number) interpreter.eval(coord.replace("x",
@@ -117,8 +124,8 @@ public class CifLoader {
      *             if an error occurs while evaluating the expression of the
      *             position
      */
-    private Vector3D calculatePosition(String position, String x, String y,
-            String z) throws IOException {
+    private Vector3D calculatePosition(String position, double x, double y,
+            double z) throws IOException {
         String[] coords = position.split(",");
         if (coords.length != 3)
             throw new IOException("Invalid symmetry equivalent position: "
@@ -126,6 +133,25 @@ public class CifLoader {
 
         return new Vector3D(calculateCoord(coords[0], x, y, z), calculateCoord(
                 coords[1], x, y, z), calculateCoord(coords[2], x, y, z));
+    }
+
+
+
+    /**
+     * Parses a string as a double.
+     * 
+     * @param value
+     *            string value
+     * @return double value
+     * @throws IOException
+     *             if the string cannot be parsed as a double
+     */
+    private double parseDouble(String value) throws IOException {
+        try {
+            return FORMAT.parse(value).doubleValue();
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
     }
 
 
@@ -141,26 +167,28 @@ public class CifLoader {
      *             if no value are found for the specified keys
      */
     protected double getDoubleValue(String... keys) throws IOException {
-        return Double.parseDouble(getStringValue(keys));
+        return parseDouble(getStringValue(keys));
     }
 
 
 
     /**
      * Returns a list of values for the first match of the specified keys. If no
-     * values is found, an empty list is returned. Thes values are parsed as
+     * values is found, an empty list is returned. These values are parsed as
      * doubles.
      * 
      * @param keys
      *            possible keys
      * @return list of double values
+     * @throws IOException
+     *             if a string cannot be parsed as a double
      */
-    protected List<Double> getDoubleValues(String... keys) {
+    protected List<Double> getDoubleValues(String... keys) throws IOException {
         List<String> values = getStringValues(keys);
 
         List<Double> newValues = new ArrayList<Double>();
         for (String value : values)
-            newValues.add(Double.parseDouble(value));
+            newValues.add(parseDouble(value));
 
         return newValues;
     }
@@ -262,7 +290,7 @@ public class CifLoader {
 
         // Parse data
         String name = parseName();
-        String reference = parseReference();
+        String reference = parseCitation();
         SpaceGroup spaceGroup = parseSpaceGroup();
         UnitCell unitCell = parseUnitCell();
 
@@ -287,45 +315,48 @@ public class CifLoader {
      */
     private List<AtomSite> parseAtoms() throws IOException {
         // Positions
-        List<String> xs = getStringValues("_atom_site_fract_x");
-        List<String> ys = getStringValues("_atom_site_fract_y");
-        List<String> zs = getStringValues("_atom_site_fract_z");
+        List<Double> xs = getDoubleValues(ATOM_SITE_FRACT_X);
+        List<Double> ys = getDoubleValues(ATOM_SITE_FRACT_Y);
+        List<Double> zs = getDoubleValues(ATOM_SITE_FRACT_Z);
 
         // Occupancies
-        List<Double> occupancies = getDoubleValues("_atom_site_occupancy");
+        List<Double> occupancies = getDoubleValues(ATOM_SITE_OCCUPANCY);
         if (occupancies.isEmpty())
             occupancies = java.util.Collections.nCopies(xs.size(), 1.0);
 
         // Element and charge
         List<String> labels =
-                getStringValues("_atom_site_type_symbol", "_atom_site_label");
+                getStringValues(ATOM_SITE_TYPE_SYMBOL, ATOM_SITE_LABEL);
         List<Element> elements = new ArrayList<Element>();
         List<Integer> charges = new ArrayList<Integer>();
 
-        Matcher match;
+        Matcher symbolMatch;
+        Matcher chargeMatcher;
+        String chargeLabel;
         int charge;
         for (String label : labels) {
-            match = SYMBOL_CHARGE_MATCHER.matcher(label);
-            if (!match.matches())
-                throw new IOException("Atom symbol and/or charge is invalid: "
-                        + label);
+            // Symbol
+            symbolMatch = SYMBOL_PATTERN.matcher(label);
+            if (!symbolMatch.matches())
+                throw new IOException("Atom symbol is invalid: " + label);
 
-            elements.add(Element.fromSymbol(match.group(1)));
+            elements.add(Element.fromSymbol(symbolMatch.group(1)));
 
-            if (match.groupCount() == 3) {
-                charge = Integer.parseInt(match.group(3));
+            // Charge
+            chargeLabel = label.substring(symbolMatch.end(1));
+            chargeMatcher = CHARGE_PATTERN.matcher(chargeLabel);
 
-                if (match.group(4).equals("-"))
-                    charges.add(-1 * charge);
-                else
-                    charges.add(charge);
-            } else {
+            if (!chargeMatcher.matches()) {
                 charges.add(0);
+                continue;
             }
-        }
 
-        if (charges.isEmpty())
-            charges = java.util.Collections.nCopies(xs.size(), 0);
+            charge = Integer.parseInt(chargeMatcher.group(1));
+            if (chargeMatcher.group(2).equals("-"))
+                charges.add(-1 * charge);
+            else
+                charges.add(charge);
+        }
 
         // Check lists size
         if (xs.size() != ys.size() || xs.size() != zs.size()
@@ -347,8 +378,8 @@ public class CifLoader {
 
         // Symmetric equivalent positions
         List<String> symEquivPositions =
-                getStringValues("_symmetry_equiv_pos_as_xyz",
-                        "_space_group_symop_operation_xyz");
+                getStringValues(SYMMETRY_EQUIV_POS_AS_XYZ,
+                        SPACE_GROUP_SYMOP_OPERATION_XYZ);
         if (symEquivPositions.isEmpty())
             symEquivPositions.add("x,y,z");
 
@@ -379,7 +410,8 @@ public class CifLoader {
      *             if no name is found
      */
     private String parseName() throws IOException {
-        return getStringValue("_chemical_name_common", "_chemical_name_mineral");
+        return getStringValue(CHEMICAL_NAME_COMMON, CHEMICAL_NAME_MINERAL,
+                CHEMICAL_NAME_STRUCTURE_TYP, CHEMICAL_NAME_SYSTEMATIC);
     }
 
 
@@ -387,11 +419,16 @@ public class CifLoader {
     /**
      * Returns a string representing the citation information in the CIF data.
      * 
-     * @return reference
+     * @return citation
      */
-    private String parseReference() {
+    private String parseCitation() {
+        // Single citation entry
+        List<String> references = getStringValues(PUBL_SECTION_REFERENCES);
+        if (references.size() == 1)
+            return references.get(0);
+
         // Check for multiple citations
-        List<String> ids = getStringValues("_citation_id");
+        List<String> ids = getStringValues(CITATION_ID);
         if (ids.size() > 1) {
             logger.warning("Loader does not support multiple citations");
             return "No reference";
@@ -401,13 +438,13 @@ public class CifLoader {
 
         // Authors
         List<String> authors =
-                getStringValues("_citation_author_name", "_publ_author_name");
+                getStringValues(CITATION_AUTHOR_NAME, PUBL_AUTHOR_NAME);
         if (!authors.isEmpty())
             ref.append(net.sf.jchemistry.util.Collections.join(authors, ", "));
         else
             ref.append("-");
 
-        List<String> years = getStringValues("_citation_year", "_journal_year");
+        List<String> years = getStringValues(CITATION_YEAR, JOURNAL_YEAR);
         if (!years.isEmpty()) {
             ref.append(" (");
             ref.append(years.get(0));
@@ -415,23 +452,23 @@ public class CifLoader {
         }
         ref.append(", ");
 
-        if (cifData.containsKey("_citation_book_title")) {
+        if (cifData.containsKey(CITATION_BOOK_TTTLE)) {
             // Book
             List<String> titles =
-                    getStringValues("_citation_title", "_publ_section_title");
+                    getStringValues(CITATION_TITLE, PUBL_SECTION_TITLE);
             if (!titles.isEmpty()) {
                 ref.append(titles.get(0));
                 ref.append(", ");
             }
 
-            List<String> bookTitles = getStringValues("_citation_book_title");
+            List<String> bookTitles = getStringValues(CITATION_BOOK_TTTLE);
             if (!bookTitles.isEmpty()) {
                 ref.append("in: ");
                 ref.append(bookTitles.get(0).trim());
                 ref.append(", ");
             }
 
-            List<String> editors = getStringValues("_citation_editor_name");
+            List<String> editors = getStringValues(CITATION_EDITOR_NAME);
             if (!editors.isEmpty()) {
                 ref.append("eds. ");
                 ref.append(net.sf.jchemistry.util.Collections.join(editors,
@@ -439,15 +476,14 @@ public class CifLoader {
                 ref.append(", ");
             }
 
-            List<String> publishers =
-                    getStringValues("_citation_book_publisher");
+            List<String> publishers = getStringValues(CITATION_BOOK_PUBLISHER);
             if (!publishers.isEmpty()) {
                 ref.append(publishers.get(0));
                 ref.append(", ");
             }
 
             List<String> publisherCities =
-                    getStringValues("_citation_book_publisher_city");
+                    getStringValues(CITATION_BOOK_PUBLISHER_CITY);
             if (!publisherCities.isEmpty()) {
                 ref.append(publisherCities.get(0));
                 ref.append(", ");
@@ -455,33 +491,31 @@ public class CifLoader {
         } else {
             // Journal
             List<String> titles =
-                    getStringValues("_citation_title", "_publ_section_title");
+                    getStringValues(CITATION_TITLE, PUBL_SECTION_TITLE);
             if (!titles.isEmpty()) {
                 ref.append(titles.get(0).trim());
                 ref.append(", ");
             }
 
             List<String> journals =
-                    getStringValues("_citation_journal_abbrev",
-                            "_citation_journal_full", "_journal_name_full");
+                    getStringValues(CITATION_JOURNAL_ABBREV,
+                            CITATION_JOURNAL_FULL, JOURNAL_NAME_FULL);
             if (!journals.isEmpty()) {
                 ref.append(journals.get(0));
                 ref.append(", ");
             }
 
             List<String> volumes =
-                    getStringValues("_citation_journal_volume",
-                            "_journal_volume");
+                    getStringValues(CITATION_JOURNAL_VOLUME, JOURNAL_VOLUME);
             if (!volumes.isEmpty()) {
                 ref.append(volumes.get(0));
                 ref.append(", ");
             }
 
             List<String> firsts =
-                    getStringValues("_citation_page_first",
-                            "_journal_page_first");
+                    getStringValues(CITATION_PAGE_FIRST, JOURNAL_PAGE_FIRST);
             List<String> lasts =
-                    getStringValues("_citation_page_last", "_journal_page_last");
+                    getStringValues(CITATION_PAGE_LAST, JOURNAL_PAGE_LAST);
             if (!firsts.isEmpty() && !lasts.isEmpty()) {
                 ref.append(firsts.get(0));
                 ref.append("-");
@@ -506,17 +540,16 @@ public class CifLoader {
     private Set<Reflector> parseReflectors() throws IOException {
         Set<Reflector> refls = new HashSet<Reflector>();
 
-        List<Integer> hs = getIntegerValues("_refln_index_h");
-        List<Integer> ks = getIntegerValues("_refln_index_k");
-        List<Integer> ls = getIntegerValues("_refln_index_l");
+        List<Integer> hs = getIntegerValues(REFLN_INDEX_H);
+        List<Integer> ks = getIntegerValues(REFLN_INDEX_K);
+        List<Integer> ls = getIntegerValues(REFLN_INDEX_L);
 
         List<Double> intensities =
-                getDoubleValues("_refln_intensity_meas",
-                        "_refln_F_squared_meas", "_refln_intensity_calc",
-                        "_refln_F_squared_calc");
+                getDoubleValues(REFLN_INTENSITY_MEAS, REFLN_F_SQUARED_MEAS,
+                        REFLN_INTENSITY_CALC, REFLN_F_SQUARED_CALC);
         if (intensities.isEmpty()) {
             List<Double> newIntensities =
-                    getDoubleValues("_refln_F_meas", "_refln_calc");
+                    getDoubleValues(REFLN_F_MEAS, REFLN_F_CALC);
             for (Double intensity : newIntensities)
                 intensities.add(Math.pow(intensity, 2));
         }
@@ -547,8 +580,8 @@ public class CifLoader {
      */
     private SpaceGroup parseSpaceGroup() throws IOException {
         int index =
-                getIntegerValue("_space_group_IT_number",
-                        "_symmetry_Int_Tables_number");
+                getIntegerValue(SPACE_GROUP_IT_NUMBER,
+                        SYMMETRY_INT_TABLES_NUMBER);
 
         return SpaceGroups.fromIndex(index);
     }
@@ -563,12 +596,12 @@ public class CifLoader {
      *             if a value is missing
      */
     private UnitCell parseUnitCell() throws IOException {
-        double a = getDoubleValue("_cell_length_a");
-        double b = getDoubleValue("_cell_length_b");
-        double c = getDoubleValue("_cell_length_c");
-        double alpha = Math.toRadians(getDoubleValue("_cell_angle_alpha"));
-        double beta = Math.toRadians(getDoubleValue("_cell_angle_beta"));
-        double gamma = Math.toRadians(getDoubleValue("_cell_angle_gamma"));
+        double a = getDoubleValue(CELL_LENGTH_A);
+        double b = getDoubleValue(CELL_LENGTH_B);
+        double c = getDoubleValue(CELL_LENGTH_C);
+        double alpha = Math.toRadians(getDoubleValue(CELL_ANGLE_ALPHA));
+        double beta = Math.toRadians(getDoubleValue(CELL_ANGLE_BETA));
+        double gamma = Math.toRadians(getDoubleValue(CELL_ANGLE_GAMMA));
 
         return UnitCellFactory.triclinic(a, b, c, alpha, beta, gamma);
     }

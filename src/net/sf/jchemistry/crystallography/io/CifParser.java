@@ -91,7 +91,7 @@ public class CifParser {
             }
 
             if (key.indexOf("_") != 0) {
-                throw new IOException("Key should starts with an underscore: "
+                throw new IOException("Tag should start with an underscore: "
                         + key);
             } else {
                 String value = getNextToken();
@@ -99,7 +99,7 @@ public class CifParser {
                     throw new IOException("End of file; data missing: " + key);
                 } else {
                     value = value.replaceAll("\\n", " ").trim();
-                    data.put(key, Collections.singletonList(value));
+                    data.put(key.substring(1), Collections.singletonList(value));
                 }
             }
         }
@@ -127,7 +127,7 @@ public class CifParser {
 
         // Read keywords
         while ((str = peekToken()) != null && str.charAt(0) == '_') {
-            str = getTokenPeeked();
+            str = getTokenPeeked().substring(1); // remove leading underscore
             keywords.add(str);
             loopData.put(str, new ArrayList<String>());
         }

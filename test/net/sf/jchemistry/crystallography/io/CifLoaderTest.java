@@ -93,6 +93,9 @@ public class CifLoaderTest {
         assertEquals(32, (int) elementMap.get(Element.Si)); // Si
         assertEquals(96, (int) elementMap.get(Element.O)); // O
 
+        for (AtomSite atom : atoms)
+            assertEquals(0, atom.getCharge());
+
         // Reflectors
         Reflectors refls = phase.getReflectors();
         assertEquals(3, refls.size());
@@ -143,6 +146,17 @@ public class CifLoaderTest {
         Map<Element, Integer> elementMap = createElementCountMap(atoms);
         assertEquals(8, (int) elementMap.get(Element.Ga)); // Ga3+
         assertEquals(12, (int) elementMap.get(Element.O)); // O
+
+        for (AtomSite atom : atoms) {
+            switch (atom.getElement()) {
+            case Ga:
+                assertEquals(3, atom.getCharge());
+                break;
+            case O:
+                assertEquals(-2, atom.getCharge());
+                break;
+            }
+        }
 
         // Reflectors
         assertEquals(0, phase.getReflectors().size());
