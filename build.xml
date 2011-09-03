@@ -83,7 +83,7 @@
             depends="-init,-copy-data"
             description="Compiles source classes">
         <ivy:retrieve conf="default" />
-        
+
         <javac srcdir="${src.dir}"
                destdir="${build.dir}"
                source="1.6"
@@ -101,7 +101,7 @@
             depends="-init,-copy-data"
             description="Compiles source classes">
         <ivy:retrieve conf="headless" />
-        
+
         <javac srcdir="${src.dir}"
                destdir="${build.dir}"
                source="1.6"
@@ -132,7 +132,7 @@
 
 
     <target name="dist"
-            depends="dist-src,dist-bin-headless,dist-bin,dist-doc"
+            depends="dist-bin-headless,dist-bin,dist-src,dist-doc"
             description="Create distributions" />
 
 
@@ -140,6 +140,7 @@
     <target name="dist-bin" depends="compile" description="Create jar">
         <jar destfile="${dist.dir}/${ivy.module}-${ivy.revision}.jar">
             <fileset dir="${build.dir}" includes="**" />
+            <fileset dir="${src.dir}" includes="**/*.java" />
         </jar>
     </target>
 
@@ -150,6 +151,12 @@
             description="Create jar (headless)">
         <jar destfile="${dist.dir}/${ivy.module}-headless-${ivy.revision}.jar">
             <fileset dir="${build.dir}" includes="**" />
+            <fileset dir="${src.dir}">
+                <include name="**/*.java" />
+                <exclude name="net/sf/jchemistry/gui/**" />
+                <exclude name="net/sf/jchemistry/crystallography/gui/**" />
+                <exclude name="net/sf/jchemistry/util/gui/**" />
+            </fileset>
         </jar>
     </target>
 
@@ -238,7 +245,7 @@
 
         <!-- Compile tests -->
         <ivy:retrieve conf="test" />
-        
+
         <javac srcdir="${test.dir}"
                destdir="${build.dir}"
                source="1.6"
