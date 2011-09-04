@@ -2,11 +2,16 @@
 project.dir=
 src.dir=${project.dir}/src
 test.dir=${project.dir}/test
+www.dir=${project.dir}/www
 
 # Output directories
 tmp.dir=
 lib.dir=${tmp.dir}/lib
 build.dir=${tmp.dir}/build
+build.www.dir=${tmp.dir}/www
 dist.dir=${tmp.dir}/dist
 doc.dir=${tmp.dir}/doc
 test.report.dir=${tmp.dir}/test/report
+
+# Sourceforge
+username=

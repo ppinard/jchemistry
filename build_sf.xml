@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+   jchemistry
+   Copyright (C) 2011 Philippe T. Pinard
+  
+   This library is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<project basedir="."
+         name="jchemistry"
+         default="help"
+         xmlns:py="antlib:net.sf.antpython"
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!-- Read the local properties (if present) -->
+    <property name="property.file" location="build.prop" />
+    <property file="${property.file}" />
+
+    <!-- Set default values to properties -->
+    <echo message="===&gt; Input directories" />
+
+    <property name="project.dir" location="." />
+    <echo message="  project.dir = ${project.dir}" />
+
+    <property name="www.dir" location="${project.dir}/www" />
+    <echo message="  www.dir = ${www.dir}" />
+
+    <echo message="===&gt; Output directories" />
+
+    <property name="tmp.dir" location="${java.io.tmpdir}" />
+    <echo message="  tmp.dir = ${tmp.dir}" />
+
+    <property name="build.www.dir" location="${tmp.dir}/www" />
+    <echo message="  build.www.dir = ${build.www.dir}" />
+
+    <property name="dist.dir" location="${tmp.dir}/dist" />
+    <echo message="  dist.dir = ${dist.dir}" />
+
+
+
+    <target name="clean"
+            description="Removes all temporary files and directories">
+        <delete dir="${build.www.dir}" />
+    </target>
+
+
+
+    <target name="clean-all"
+            description="Remove all created files and directories"
+            depends="clean">
+        <delete dir="${dist.dir}" />
+        <ant antfile="${project.dir}/build.xml" target="clean-all" />
+    </target>
+
+
+
+    <target name="-init" description="Create all directories for build">
+        <mkdir dir="${www.dir}" />
+    </target>
+
+
+
+    <target name="help">
+        <echo>Use ant -p to get a listing of all the available targets.
+      </echo>
+    </target>
+
+
+
+    <target name="build-www" description="Build documentation">
+        <!-- Webpage -->
+        <py:sphinxdoc dir="${www.dir}" todir="${build.www.dir}" />
+
+        <!-- Javadoc -->
+        <mkdir dir="${build.www.dir}/javadoc" />
+        <ant antfile="${project.dir}/build.xml" target="javadoc">
+            <property name="doc.dir" value="${build.www.dir}/javadoc" />
+        </ant>
+    </target>
+
+
+
+    <target name="publish-www"
+            depends="build-www"
+            description="Publish website to SourceForge">
+        <!-- Username and password -->
+        <fail message="Sourceforge username is missing" unless="username" />
+
+        <input message="password:>" addproperty="password">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+        </input>
+
+        <!-- Transfer files -->
+        <scp todir="${username},jchemistry:${password}@web.sourceforge.net:/home/project-web/jchemistry/htdocs/">
+            <fileset dir="${build.www.dir}" />
+        </scp>
+    </target>
+
+
+
+    <target name="publish-artifacts"
+            description="Publish artifacts to SourceForge">
+        <!-- Create artifacts -->
+        <ant antfile="${project.dir}/build.xml" target="dist">
+            <property name="dist.dir" value="${dist.dir}" />
+        </ant>
+
+        <!-- Username and password -->
+        <fail message="Sourceforge username is missing" unless="username" />
+
+        <input message="password:>" addproperty="password">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+        </input>
+
+        <!-- Transfer files -->
+        <ivy:info />
+        <scp todir="${username},jchemistry:${password}@frs.sourceforge.net:/home/frs/project/j/jc/jchemistry/${ivy.revision}">
+            <fileset dir="${dist.dir}" />
+        </scp>
+    </target>
+
+
+
+    <target name="publish-ivy" description="Publish ivy to SourceForge">
+        <!-- Create distribution -->
+        <ant antfile="${project.dir}/build.xml" target="dist-bin">
+            <property name="dist.dir" value="${dist.dir}" />
+        </ant>
+
+        <ivy:info />
+        <copy file="${project.dir}/ivy.xml"
+              tofile="${dist.dir}/ivy-${ivy.revision}.xml" />
+
+        <!-- Username and password -->
+        <fail message="Sourceforge username is missing" unless="username" />
+
+        <input message="password:>" addproperty="password">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+        </input>
+
+        <!-- Transfer files -->
+        <scp todir="${username},jchemistry:${password}@web.sourceforge.net:/home/project-web/jchemistry/htdocs/ivy">
+            <fileset dir="${dist.dir}" />
+        </scp>
+    </target>
+
+
+
+    <target name="publish" description="Publish all to SourceForge">
+        <!-- Username and password -->
+        <fail message="Sourceforge username is missing" unless="username" />
+
+        <input message="password:>" addproperty="password">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+        </input>
+
+        <!-- Publish all -->
+        <antcall target="clean-all" />
+        <antcall target="publish-artifacts" />
+
+        <antcall target="clean-all" />
+        <antcall target="publish-ivy" />
+
+        <antcall target="clean-all" />
+        <antcall target="publish-www" />
+    </target>
+
+
+</project>

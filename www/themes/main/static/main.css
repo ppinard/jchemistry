@@ -1,0 +1,312 @@
+/*
+ * agogo.css_t
+ * ~~~~~~~~~~~
+ *
+ * Sphinx stylesheet -- agogo theme.
+ *
+ * :copyright: Copyright 2007-2011 by the Sphinx team, see AUTHORS.
+ * :license: BSD, see LICENSE for details.
+ *
+ */
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  line-height: 1em;
+  color: black;
+  background-color: #d7d3cb;
+  margin: 0px 80px;
+  min-width: 740px;
+  padding: 0;
+}
+
+
+/* Page layout */
+
+div.document {
+    background-color: white;
+    text-align: left;
+    margin: 0;
+    padding: 0 20px;
+}
+
+div.header-wrapper {
+}
+
+div.footer-wrapper {
+    text-align: center;
+    padding: 20px 0;
+}
+
+
+/* Default body styles */
+a {
+  color: #355d7e;
+}
+
+div.bodywrapper a, div.footer a {
+  text-decoration: underline;
+}
+
+.clearer {
+  clear: both;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.line-block {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.line-block .line-block {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 1.5em;
+}
+
+h1, h2, h3, h4 {
+  font-family: Arial, sans-serif;
+  font-weight: normal;
+  color: black;
+  margin-bottom: .8em;
+  margin-top: .4em;
+  font-size: 1.5em;
+}
+
+h1 {
+  color: #d8b25c;
+}
+
+h2 {
+  color: #968c8c;
+  font-size: 1.25em;
+}
+
+h3 {
+  font-family: "Verdana", Arial, sans-serif;
+  font-weight: bold;
+  color: black;
+  font-size: 1em;
+}
+
+a.headerlink {
+  visibility: hidden;
+  color: #dddddd;
+  padding-left: .3em;
+}
+
+h1:hover > a.headerlink,
+h2:hover > a.headerlink,
+h3:hover > a.headerlink,
+h4:hover > a.headerlink,
+h5:hover > a.headerlink,
+h6:hover > a.headerlink,
+dt:hover > a.headerlink {
+  visibility: hidden;
+}
+
+img {
+  border: 0;
+}
+
+div.admonition {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 2px 7px 1px 7px;
+  border-left: 0.2em solid black;
+}
+
+p.admonition-title {
+  margin: 0px 10px 5px 0px;
+  font-weight: bold;
+}
+
+dt:target, .highlighted {
+  background-color: #fbe54e;
+}
+
+table.docutils {
+    border-collapse: collapse;
+    border-width: 0;
+    margin-left: 3em;
+}
+
+table.docutils td, table.docutils th {
+	border-width: 0;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    text-align: center;
+}
+
+/* Header */
+
+div.header {
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+div.header h1 {
+  color: #a5ab81;
+  font-weight: bold;
+  font-size: 180%;
+  letter-spacing: .08em;
+}
+
+div.header h1 a {
+  color: #a5ab81;
+  text-decoration: none;
+}
+
+div.header h1 a:hover {
+  color: #797d5f;
+  text-decoration: none;
+}
+
+div.header div.rel {
+  margin-top: 1em;
+  border-top: 2px solid #94b6d2;
+  padding-top: 0.5em;
+  border-bottom: 2px solid #94b6d2;
+  padding-bottom: 0.5em;
+  padding-left: 0.5em;
+}
+
+div.header div.rel a {
+  color: #94b6d2;
+  letter-spacing: .1em;
+  text-transform: lowercase;
+  text-decoration: none;
+}
+
+
+div.header div.rel a:hover {
+    text-decoration: none;
+    font-style: italic;
+}
+
+/* Content */
+div.document ul {
+  margin: 1.5em;
+  list-style-type: square;
+}
+
+div.document dd {
+  margin-left: 1.2em;
+  margin-top: .4em;
+  margin-bottom: 1em;
+}
+
+div.document .section {
+  margin-top: 1.7em;
+}
+div.document .section:first-child {
+  margin-top: 0px;
+}
+
+div.document div.highlight {
+  padding: 3px;
+  background-color: #eeeeec;
+  border-top: 2px solid #dddddd;
+  border-bottom: 2px solid #dddddd;
+  margin-top: .8em;
+  margin-bottom: .8em;
+}
+
+div.document h2 {
+  margin-top: .7em;
+}
+
+div.document p {
+  margin-bottom: .5em;
+}
+
+div.document li.toctree-l1 {
+  margin-bottom: 1em;
+}
+
+div.document .descname {
+  font-weight: bold;
+}
+
+div.document .docutils.literal {
+  background-color: #eeeeec;
+  padding: 1px;
+}
+
+div.document .docutils.xref.literal {
+  background-color: transparent;
+  padding: 0px;
+}
+
+div.document blockquote {
+  margin: 1em;
+}
+
+div.document ol {
+  margin: 1.5em;
+}
+
+/* Footer */
+div.footer {
+  margin-top: 1em;
+  border-top: 2px solid #94b6d2;
+}
+
+div.footer, div.footer a {
+  color: #888a85;
+}
+
+
+/* Styles copied from basic theme */
+
+img.align-left, .figure.align-left, object.align-left {
+    clear: left;
+    float: left;
+    margin-right: 1em;
+}
+
+img.align-right, .figure.align-right, object.align-right {
+    clear: right;
+    float: right;
+    margin-left: 1em;
+}
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-center {
+    clear: both;
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
+}
+
+/* -- features page --------------------------------------------------------- */
+.features-img {
+  padding-left: 80px;
+}
+
+
+/* -- code highlight--------------------------------------------------------- */
+
+div.highlight {
+  background: #ffffe7;
+  margin-left: 3em;
+  margin-right: 3em;
+  padding-left: 0.5em;
+}
