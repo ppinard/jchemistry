@@ -155,6 +155,8 @@ public class CifLoaderTest {
             case O:
                 assertEquals(-2, atom.getCharge());
                 break;
+            default:
+                break;
             }
         }
 
