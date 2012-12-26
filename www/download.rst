@@ -71,8 +71,8 @@ Source
 ------
 
 The source is available in a :sf-file:`zip <%(name)s-src-%(version)s.zip>` file 
-or via the `Bazaar <http://bazaar.canonical.com>`_ repository on SourceForge:
+or via the `Mercurial <http://mercurial.selenic.com/>`_ repository on SourceForge::
 
-  bzr://jchemistry.bzr.sourceforge.net/bzrroot/jchemistry
+  hg clone http://hg.code.sf.net/p/jchemistry/code jchemistry-code
   
 
